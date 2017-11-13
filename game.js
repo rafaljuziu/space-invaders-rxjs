@@ -37,7 +37,7 @@ export const game = (function () {
 
   function renderPlayer() {
     let player = document.createElement('i');
-    player.classList = 'fa fa-rocket fa-4x';
+    player.classList = 'fa fa-rocket fa-4x player';
     document.querySelector('.container').appendChild(player);
   }
 
@@ -65,15 +65,29 @@ export const game = (function () {
       player: new Player()
     },
     renderInitialGame: renderInitialGame,
-    move: function(direction) {
-      this.state.player.x += direction;
-      rerenderGame();
+    move: function (direction) {
+      if (this.state.player.x + direction <= 100 && this.state.player.x + direction >= 0) {
+        this.state.player.x += direction;
+        rerenderGame();
+      }
     },
     fire: () => {
-      console.log('Pew pew');
-    }
+      createLaser()
+    },
+    lasers: []
   };
 })();
+
+function createLaser() {
+  let laser = document.createElement('i');
+  laser.classList = 'fa fa-arrows-v laser';
+  let player = document.querySelector('.player');
+  laser.style.top = (player.getBoundingClientRect().top) + 'px';
+  laser.style.left = (player.getBoundingClientRect().left + 42) + 'px';
+  document.body.appendChild(laser);
+  let id = game.lasers.push(laser) - 1;
+  laser.id = 'laser' + id;
+}
 
 function rerenderGame() {
   let player = document.querySelector('i.fa-rocket');

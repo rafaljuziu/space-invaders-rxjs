@@ -1,6 +1,5 @@
-i.fa-rocket {
+.player {
   transform: rotate(-45deg);
   position: relative;
   top: 150px;
-  left: 0px;
 }
