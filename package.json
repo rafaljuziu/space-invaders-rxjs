@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "font-awesome": "^4.7.0",
     "rxjs-es": "^5.0.0-beta.12"
+  },
+  "devDependencies": {
   }
 }
