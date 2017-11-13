@@ -1,3 +1,5 @@
+import * as Rx from 'rxjs-es';
+
 function Invader() {
   this.alive = true;
 }
@@ -74,19 +76,26 @@ export const game = (function () {
     fire: () => {
       createLaser()
     },
-    lasers: []
+    lasers: [],
+    removeLaser: function (laser) {
+      let index = this.lasers.indexOf(laser);
+      this.lasers = this.lasers.slice();
+      this.lasers.splice(index, 1);
+      let element = document.getElementById('' + laser.id);
+      document.body.removeChild(element);
+    }
   };
 })();
 
 function createLaser() {
   let laser = document.createElement('i');
-  laser.classList = 'fa fa-arrows-v laser';
   let player = document.querySelector('.player');
   laser.style.top = (player.getBoundingClientRect().top) + 'px';
   laser.style.left = (player.getBoundingClientRect().left + 42) + 'px';
+  laser.classList = 'fa fa-arrows-v laser';
+  laser.id = 'laser' + Math.random();
   document.body.appendChild(laser);
-  let id = game.lasers.push(laser) - 1;
-  laser.id = 'laser' + id;
+  game.lasers.push(laser);
 }
 
 function rerenderGame() {
