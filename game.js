@@ -3,6 +3,10 @@ import {renderer} from './renderer';
 
 export const game = (function () {
 
+  function renderInitialGame() {
+    renderer.renderInitialGame(state.invaders);
+  }
+
   function createInvadersRow() {
     let row = [];
     for (let i = 0; i < 10; i++) {
@@ -20,47 +24,64 @@ export const game = (function () {
     return invaders;
   }
 
-  function rerenderGame() {
-    let player = document.querySelector('i.fa-rocket');
-    player.style.left = getPlayerXOnPage(game.state.player.x);
+  function findAndModifyInvader(searchedInvader, fn) {
+    for (let invadersRow of state.invaders) {
+      for (let i = 0; i < invadersRow.length; i++) {
+        if (invadersRow[i] === searchedInvader) {
+          invadersRow[i] = new Invader(invadersRow[i]);
+          fn(invadersRow[i]);
+        }
+      }
+    }
   }
 
-  function getPlayerXOnPage(playerX) {
-    let position = (playerX - 50) * 5;
-    return position + 'px';
-  }
-
-  function Invader() {
-    this.alive = true;
+  function Invader(source) {
+    if (source) {
+      this.element = source.element;
+      this.alive = source.alive;
+    } else {
+      this.alive = true;
+    }
   }
 
   function Player() {
     this.x = 50;
   }
 
+  let state = {
+    invaders: createInvadersBoard(),
+    lives: 3,
+    player: new Player(),
+    lasers: [],
+  };
+
+  let invaders$ = Rx.Observable.from(state.invaders.flatMap(x => x))
+    .filter(invader => invader.alive);
+
   return {
-    state: {
-      invaders: createInvadersBoard(),
-      lives: 3,
-      player: new Player(),
-      lasers: [],
-    },
-    renderInitialGame: renderer.renderInitialGame,
+    state: state,
+    invaders$: invaders$,
+    renderInitialGame: renderInitialGame,
     move: function (direction) {
       if (this.state.player.x + direction <= 100 && this.state.player.x + direction >= 0) {
         this.state.player.x += direction;
-        rerenderGame();
+        renderer.rerenderGame(state);
       }
     },
-    fire: () => {
+    fire: function () {
       let laser = renderer.createLaser();
       this.state.lasers.push(laser);
     },
     removeLaser: function removeLaser(laser) {
-      let index = this.state.lasers.indexOf(laser);
-      this.state.lasers = this.state.lasers.slice();
-      this.state.lasers.splice(index, 1);
+      let index = state.lasers.indexOf(laser);
+      state.lasers = state.lasers.slice();
+      state.lasers.splice(index, 1);
       renderer.removeLaser(laser);
+    },
+    kill: function (hit) {
+      findAndModifyInvader(hit.invader, invader => invader.alive = false);
+      this.removeLaser(hit.laser);
+      renderer.rerenderGame(state);
     }
   };
 })();

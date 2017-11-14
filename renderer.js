@@ -1,29 +1,8 @@
 export const renderer = (function () {
 
-  function renderInitialGame() {
-    const board = this.state.invaders;
-    for (let invadersRow of board) {
-      renderRow(invadersRow);
-    }
+  function renderInitialGame(invaders) {
+    renderBoard(invaders);
     renderPlayer();
-  }
-
-  function renderRow(invadersRow) {
-    const row = document.createElement('div');
-    row.className = 'invaders-row';
-    for (let invader of invadersRow) {
-      renderInvader(invader, row);
-    }
-    document.querySelector('.container').appendChild(row);
-  }
-
-  function renderInvader(invader, row) {
-    let invaderElement = document.createElement('div');
-    invaderElement.className = 'space-invader';
-    if (!invader.alive) {
-      invaderElement.className += ' dead';
-    }
-    row.appendChild(invaderElement);
   }
 
   function renderPlayer() {
@@ -32,8 +11,76 @@ export const renderer = (function () {
     document.querySelector('.container').appendChild(player);
   }
 
+  function renderGame(gameState) {
+    renderBoard(gameState.invaders);
+    rerenderPlayer(gameState);
+  }
+
+  function renderBoard(invaders) {
+    let allRows = document.querySelectorAll('div.invaders-row');
+    if (allRows.length === 0) {
+      allRows = createRowElements(invaders);
+    }
+
+    for (let i = 0; i < invaders.length; i++) {
+      renderRow(invaders[i], allRows[i]);
+    }
+  }
+
+  function createRowElements(invaders) {
+    let allRows = [];
+    for (let i = 0; i < invaders.length; i++) {
+      let row = document.createElement('div');
+      row.className = 'invaders-row';
+      document.querySelector('.container').appendChild(row);
+      allRows.push(row);
+    }
+    return allRows;
+  }
+
+  function renderRow(invadersRow, rowElement) {
+    let invadersElements = rowElement.querySelectorAll('div.space-invader');
+    if (invadersElements.length === 0) {
+      invadersElements = createInvadersElements(invadersRow, rowElement);
+    }
+
+    for (let i = 0; i < invadersRow.length; i++) {
+      renderInvader(invadersRow[i], invadersElements[i]);
+    }
+  }
+
+  function createInvadersElements(invadersRow, rowElement) {
+    let invadersElements = [];
+    for (let i = 0; i < invadersRow.length; i++) {
+      let invaderElement = document.createElement('div');
+      invaderElement.classList = 'space-invader';
+      if (!invadersRow[i].alive) {
+        invaderElement.classList += ' dead';
+      }
+      rowElement.appendChild(invaderElement);
+      invadersRow[i].element = invaderElement;
+      invadersElements.push(invaderElement);
+    }
+    return invadersElements;
+  }
+
+  function renderInvader(invader, invaderElement) {
+    invaderElement.classList = 'space-invader' + (invader.alive ? '' : ' dead');
+  }
+
+  function rerenderPlayer(gameState) {
+    let player = document.querySelector('i.fa-rocket');
+    player.style.left = getPlayerXOnPage(gameState.player.x);
+  }
+
+  function getPlayerXOnPage(playerX) {
+    let position = (playerX - 50) * 5;
+    return position + 'px';
+  }
+
   return {
     renderInitialGame: renderInitialGame,
+    rerenderGame: renderGame,
     createLaser: function createLaser() {
       let laser = document.createElement('i');
       let player = document.querySelector('.player');
