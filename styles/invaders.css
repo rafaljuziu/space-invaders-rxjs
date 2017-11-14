@@ -1,10 +1,20 @@
-.container {
-  margin-top: 100px;
-  text-align: center;
+body {
+  background-color: black;
+  overflow: hidden;
 }
 
-.invaders-row {
+.container {
+  position: relative;
+  top: 100px;
+  padding-top: 15px;
+  text-align: center;
+  overflow: hidden;
+  height: 100vw;
+}
 
+.invaders-container {
+  position: relative;
+  left: -30px;
 }
 
 .space-invader.dead {
@@ -16,42 +26,41 @@
   transform: scale(0.4);
   display: inline-block;
 
-  box-shadow:
-      0 0 0 1em darkblue,
-      0 1em 0 1em darkblue,
-      -2.5em 1.5em 0 .5em darkblue,
-      2.5em 1.5em 0 .5em darkblue,
-      -3em -3em 0 0 darkblue,
-      3em -3em 0 0 darkblue,
-      -2em -2em 0 0 darkblue,
-      2em -2em 0 0 darkblue,
-      -3em -1em 0 0 darkblue,
-      -2em -1em 0 0 darkblue,
-      2em -1em 0 0 darkblue,
-      3em -1em 0 0 darkblue,
-      -4em 0 0 0 darkblue,
-      -3em 0 0 0 darkblue,
-      3em 0 0 0 darkblue,
-      4em 0 0 0 darkblue,
-      -5em 1em 0 0 darkblue,
-      -4em 1em 0 0 darkblue,
-      4em 1em 0 0 darkblue,
-      5em 1em 0 0 darkblue,
-      -5em 2em 0 0 darkblue,
-      5em 2em 0 0 darkblue,
-      -5em 3em 0 0 darkblue,
-      -3em 3em 0 0 darkblue,
-      3em 3em 0 0 darkblue,
-      5em 3em 0 0 darkblue,
-      -2em 4em 0 0 darkblue,
-      -1em 4em 0 0 darkblue,
-      1em 4em 0 0 darkblue,
-      2em 4em 0 0 darkblue;
+  box-shadow: 0 0 0 1em darkblue,
+  0 1em 0 1em darkblue,
+  -2.5em 1.5em 0 .5em darkblue,
+  2.5em 1.5em 0 .5em darkblue,
+  -3em -3em 0 0 darkblue,
+  3em -3em 0 0 darkblue,
+  -2em -2em 0 0 darkblue,
+  2em -2em 0 0 darkblue,
+  -3em -1em 0 0 darkblue,
+  -2em -1em 0 0 darkblue,
+  2em -1em 0 0 darkblue,
+  3em -1em 0 0 darkblue,
+  -4em 0 0 0 darkblue,
+  -3em 0 0 0 darkblue,
+  3em 0 0 0 darkblue,
+  4em 0 0 0 darkblue,
+  -5em 1em 0 0 darkblue,
+  -4em 1em 0 0 darkblue,
+  4em 1em 0 0 darkblue,
+  5em 1em 0 0 darkblue,
+  -5em 2em 0 0 darkblue,
+  5em 2em 0 0 darkblue,
+  -5em 3em 0 0 darkblue,
+  -3em 3em 0 0 darkblue,
+  3em 3em 0 0 darkblue,
+  5em 3em 0 0 darkblue,
+  -2em 4em 0 0 darkblue,
+  -1em 4em 0 0 darkblue,
+  1em 4em 0 0 darkblue,
+  2em 4em 0 0 darkblue;
 
   background: darkblue;
   width: 1em;
   height: 1em;
   overflow: hidden;
 
-  margin: 0px 0 50px 65px;
+  margin: 0 0 50px 65px;
 }

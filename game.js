@@ -3,8 +3,11 @@ import {renderer} from './renderer';
 
 export const game = (function () {
 
+  const INVADERS_MOVE_STEP = 10;
+  let DIRECTION = 1;
+
   function renderInitialGame() {
-    renderer.renderInitialGame(state.invaders);
+    renderer.renderInitialGame(state);
   }
 
   function createInvadersRow() {
@@ -24,15 +27,23 @@ export const game = (function () {
     return invaders;
   }
 
-  function findAndModifyInvader(searchedInvader, fn) {
-    for (let invadersRow of state.invaders) {
+  function findInvader(searchedInvader) {
+    for (let row = 0; row < state.invaders.length; row++) {
+      let invadersRow = state.invaders[row];
       for (let i = 0; i < invadersRow.length; i++) {
         if (invadersRow[i] === searchedInvader) {
-          invadersRow[i] = new Invader(invadersRow[i]);
-          fn(invadersRow[i]);
+          return [row, i];
         }
       }
     }
+  }
+
+  function killInvader(searchedInvader) {
+    let [row, i] = findInvader(searchedInvader);
+    let killedInvader = state.invaders[row][i];
+    let copiedInvader = new Invader(killedInvader);
+    copiedInvader.alive = false;
+    state.invaders[row][i] = copiedInvader;
   }
 
   function Invader(source) {
@@ -50,12 +61,14 @@ export const game = (function () {
 
   let state = {
     invaders: createInvadersBoard(),
+    invadersPosition: 50,
     lives: 3,
     player: new Player(),
     lasers: [],
   };
 
-  let invaders$ = Rx.Observable.from(state.invaders.flatMap(x => x))
+  let invaders$ = Rx.Observable.from(state.invaders)
+    .flatMap(invaders => Rx.Observable.from(invaders.flatMap(x => x)))
     .filter(invader => invader.alive);
 
   return {
@@ -79,9 +92,18 @@ export const game = (function () {
       renderer.removeLaser(laser);
     },
     kill: function (hit) {
-      findAndModifyInvader(hit.invader, invader => invader.alive = false);
+      killInvader(hit.invader);
       this.removeLaser(hit.laser);
       renderer.rerenderGame(state);
+    },
+    moveInvaders: function () {
+      let invadersPosition = this.state.invadersPosition;
+      invadersPosition += DIRECTION * INVADERS_MOVE_STEP;
+      if (invadersPosition >= 100 || invadersPosition <= 0) {
+        DIRECTION = -DIRECTION;
+      }
+      this.state.invadersPosition = invadersPosition;
+      renderer.rerenderGame(this.state);
     }
   };
 })();

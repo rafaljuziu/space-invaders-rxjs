@@ -1,8 +1,7 @@
 import * as Rx from 'rxjs-es';
 import {game} from './game';
-import {fireHandler} from './fire-handler';
-
-const LASER_STEP = 10;
+import {fireHandler$} from './fire-handler';
+import {renderer} from './renderer';
 
 let singleLasers$ = Rx.Observable.interval(100)
   .map(() => game.state.lasers)
@@ -10,12 +9,15 @@ let singleLasers$ = Rx.Observable.interval(100)
 
 singleLasers$
   .subscribe(laser => {
-    laser.style.top = (parseInt(laser.style.top) - LASER_STEP) + 'px';
-    fireHandler.next(laser);
+    renderer.moveLaserUp(laser);
+    fireHandler$.next(laser);
   });
 
+let laserOfTheScreen = laser => parseInt(laser.style.top) < 0;
+
 singleLasers$
-  .filter(laser => parseInt(laser.style.top) < 0)
+  .filter(laserOfTheScreen)
   .subscribe(laser => {
     game.removeLaser(laser);
   });
+

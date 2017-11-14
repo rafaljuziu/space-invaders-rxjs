@@ -1,7 +1,9 @@
 export const renderer = (function () {
 
-  function renderInitialGame(invaders) {
-    renderBoard(invaders);
+  const LASER_STEP = 10;
+
+  function renderInitialGame(gameState) {
+    renderBoard(gameState);
     renderPlayer();
   }
 
@@ -12,19 +14,26 @@ export const renderer = (function () {
   }
 
   function renderGame(gameState) {
-    renderBoard(gameState.invaders);
+    renderBoard(gameState);
     rerenderPlayer(gameState);
   }
 
-  function renderBoard(invaders) {
+  function renderBoard(gameState) {
+    rerenderContainer(gameState.invadersPosition);
+
     let allRows = document.querySelectorAll('div.invaders-row');
     if (allRows.length === 0) {
-      allRows = createRowElements(invaders);
+      allRows = createRowElements(gameState.invaders);
     }
 
-    for (let i = 0; i < invaders.length; i++) {
-      renderRow(invaders[i], allRows[i]);
+    for (let i = 0; i < gameState.invaders.length; i++) {
+      renderRow(gameState.invaders[i], allRows[i]);
     }
+  }
+
+  function rerenderContainer(invadersPosition) {
+    let relativePositionOnPage = ((invadersPosition - 50) * 3 - 30);
+    document.querySelector('.invaders-container').style.left = relativePositionOnPage + 'px';
   }
 
   function createRowElements(invaders) {
@@ -32,7 +41,7 @@ export const renderer = (function () {
     for (let i = 0; i < invaders.length; i++) {
       let row = document.createElement('div');
       row.className = 'invaders-row';
-      document.querySelector('.container').appendChild(row);
+      document.querySelector('.invaders-container').appendChild(row);
       allRows.push(row);
     }
     return allRows;
@@ -94,6 +103,9 @@ export const renderer = (function () {
     removeLaser: function (laser) {
       let element = document.getElementById(laser.id);
       document.body.removeChild(element);
+    },
+    moveLaserUp: function (laser) {
+      laser.style.top = (parseInt(laser.style.top) - LASER_STEP) + 'px';
     }
   };
 })();

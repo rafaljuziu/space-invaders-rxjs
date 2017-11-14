@@ -1,9 +1,9 @@
 import * as Rx from 'rxjs-es';
 import {game} from './game';
 
-export const fireHandler = new Rx.Subject();
+export const fireHandler$ = new Rx.Subject();
 
-fireHandler
+fireHandler$
   .concatMap(laser => game.invaders$.map(invader => {
     return {laser: laser, invader: invader};
   }))
