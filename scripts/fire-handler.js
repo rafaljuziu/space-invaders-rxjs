@@ -28,15 +28,6 @@ playerFireHandler$
     game.kill(hit);
   });
 
-invaderFireHandler$
-  .map(laser => {
-    return {laser: laser, target: game.state.player, boundingBox: PLAYER_BOUNDING_BOX};
-  })
-  .filter(isHit)
-  .subscribe(hit => {
-    game.playerHit(hit);
-  });
-
 function isHit(possibleHit) {
   const laser = possibleHit.laser.getBoundingClientRect();
   const target = possibleHit.target.element.getBoundingClientRect();

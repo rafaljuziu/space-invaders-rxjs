@@ -20,19 +20,3 @@ singlePlayerLasers$
   .subscribe(laser => {
     game.removeLaser(laser);
   });
-
-let singleInvaderLasers$ = Rx.Observable.interval(100)
-  .map(() => game.state.invaderLasers)
-  .flatMap(lasers => Rx.Observable.from(lasers));
-
-singleInvaderLasers$
-  .subscribe(laser => {
-    renderer.moveLaserDown(laser);
-    invaderFireHandler$.next(laser);
-  });
-
-singleInvaderLasers$
-  .filter(laserOfTheScreen)
-  .subscribe(laser => {
-    game.removeLaser(laser);
-  });
