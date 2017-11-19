@@ -5,6 +5,11 @@ export const renderer = (function () {
   function renderInitialGame(gameState) {
     renderBoard(gameState);
     gameState.player.element = renderPlayer();
+    renderLives(gameState.lives);
+  }
+
+  function renderLives(lives) {
+    document.querySelector('.lives p span').innerText = lives;
   }
 
   function renderPlayer() {
@@ -17,6 +22,7 @@ export const renderer = (function () {
   function renderGame(gameState) {
     renderBoard(gameState);
     rerenderPlayer(gameState);
+    renderLives(gameState.lives);
   }
 
   function renderBoard(gameState) {
@@ -116,6 +122,9 @@ export const renderer = (function () {
     },
     moveLaserDown: function (laser) {
       laser.style.top = (parseInt(laser.style.top) + LASER_STEP) + 'px';
+    },
+    renderGameOver: function () {
+      document.querySelector('.gameover').style.visibility = 'visible';
     }
   };
 })();

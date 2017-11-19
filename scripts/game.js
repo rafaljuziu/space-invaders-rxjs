@@ -81,6 +81,9 @@ export const game = (function () {
 
   function hitPlayer() {
     state.lives--;
+    if (state.lives <= 0) {
+      renderer.renderGameOver();
+    }
     state.player.x = 50;
   }
 
