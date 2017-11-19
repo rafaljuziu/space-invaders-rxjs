@@ -1,6 +1,9 @@
 import * as Rx from 'rxjs-es';
 import {renderer} from './renderer';
 
+export const TOTAL_ROWS = 6;
+export const TOTAL_COLUMNS = 10;
+
 export const game = (function () {
 
   const INVADERS_MOVE_STEP = 10;
@@ -10,18 +13,18 @@ export const game = (function () {
     renderer.renderInitialGame(state);
   }
 
-  function createInvadersRow() {
+  function createInvadersRow(rowIndex) {
     let row = [];
-    for (let i = 0; i < 10; i++) {
-      row.push(new Invader());
+    for (let i = 0; i < TOTAL_COLUMNS; i++) {
+      row.push(new Invader(i, rowIndex));
     }
     return row;
   }
 
   function createInvadersBoard() {
     let invaders = [];
-    for (let i = 0; i < 6; i++) {
-      let row = createInvadersRow();
+    for (let i = 0; i < TOTAL_ROWS; i++) {
+      let row = createInvadersRow(i);
       invaders.push(row);
     }
     return invaders;
@@ -41,19 +44,23 @@ export const game = (function () {
   function killInvader(searchedInvader) {
     let [row, i] = findInvader(searchedInvader);
     let killedInvader = state.invaders[row][i];
-    let copiedInvader = new Invader(killedInvader);
+    let copiedInvader = killedInvader.copyInvader();
     copiedInvader.alive = false;
     state.invaders[row][i] = copiedInvader;
   }
 
-  function Invader(source) {
-    if (source) {
-      this.element = source.element;
-      this.alive = source.alive;
-    } else {
-      this.alive = true;
-    }
+  function Invader(x, y) {
+    this.x = x;
+    this.y = y;
+    this.alive = true;
   }
+
+  Invader.prototype.copyInvader = function () {
+    let invader = new Invader(this.x, this.y);
+    invader.alive = this.alive;
+    invader.element = this.element;
+    return invader;
+  };
 
   function Player() {
     this.x = 50;
@@ -65,11 +72,17 @@ export const game = (function () {
     lives: 3,
     player: new Player(),
     lasers: [],
+    invaderLasers: []
   };
 
   let invaders$ = Rx.Observable.from(state.invaders)
     .flatMap(invaders => Rx.Observable.from(invaders.flatMap(x => x)))
     .filter(invader => invader.alive);
+
+  function hitPlayer() {
+    state.lives--;
+    state.player.x = 50;
+  }
 
   return {
     state: state,
@@ -82,17 +95,23 @@ export const game = (function () {
       }
     },
     fire: function () {
-      let laser = renderer.createLaser();
+      let laser = renderer.createPlayerLaser(this.state.player.element);
       this.state.lasers.push(laser);
     },
     removeLaser: function removeLaser(laser) {
       let index = state.lasers.indexOf(laser);
-      state.lasers = state.lasers.slice();
-      state.lasers.splice(index, 1);
+      if (index < 0) {
+        index = state.invaderLasers.indexOf(laser);
+        state.invaderLasers = state.invaderLasers.slice();
+        state.invaderLasers.splice(index, 1);
+      } else {
+        state.lasers = state.lasers.slice();
+        state.lasers.splice(index, 1);
+      }
       renderer.removeLaser(laser);
     },
     kill: function (hit) {
-      killInvader(hit.invader);
+      killInvader(hit.target);
       this.removeLaser(hit.laser);
       renderer.rerenderGame(state);
     },
@@ -104,6 +123,15 @@ export const game = (function () {
       }
       this.state.invadersPosition = invadersPosition;
       renderer.rerenderGame(this.state);
+    },
+    fireFromInvader: function (invader) {
+      const invaderLaser = renderer.createInvaderLaser(invader.element);
+      this.state.invaderLasers.push(invaderLaser);
+    },
+    playerHit: function (hit) {
+      hitPlayer();
+      this.removeLaser(hit.laser);
+      renderer.rerenderGame(state);
     }
   };
 })();

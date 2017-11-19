@@ -4,13 +4,14 @@ export const renderer = (function () {
 
   function renderInitialGame(gameState) {
     renderBoard(gameState);
-    renderPlayer();
+    gameState.player.element = renderPlayer();
   }
 
   function renderPlayer() {
     let player = document.createElement('i');
     player.classList = 'fa fa-rocket fa-4x player';
     document.querySelector('.container').appendChild(player);
+    return player;
   }
 
   function renderGame(gameState) {
@@ -87,18 +88,24 @@ export const renderer = (function () {
     return position + 'px';
   }
 
+  function createLaser(element) {
+    let laser = document.createElement('i');
+    laser.style.top = (element.getBoundingClientRect().top) + 'px';
+    laser.style.left = (element.getBoundingClientRect().left + 42) + 'px';
+    laser.classList = 'fa fa-arrows-v laser';
+    laser.id = 'laser' + Math.random();
+    document.body.appendChild(laser);
+    return laser;
+  }
+
   return {
     renderInitialGame: renderInitialGame,
     rerenderGame: renderGame,
-    createLaser: function createLaser() {
-      let laser = document.createElement('i');
-      let player = document.querySelector('.player');
-      laser.style.top = (player.getBoundingClientRect().top) + 'px';
-      laser.style.left = (player.getBoundingClientRect().left + 42) + 'px';
-      laser.classList = 'fa fa-arrows-v laser';
-      laser.id = 'laser' + Math.random();
-      document.body.appendChild(laser);
-      return laser;
+    createInvaderLaser: function (invaderElement) {
+      return createLaser(invaderElement);
+    },
+    createPlayerLaser: function (player) {
+      return createLaser(player);
     },
     removeLaser: function (laser) {
       let element = document.getElementById(laser.id);
@@ -106,6 +113,9 @@ export const renderer = (function () {
     },
     moveLaserUp: function (laser) {
       laser.style.top = (parseInt(laser.style.top) - LASER_STEP) + 'px';
+    },
+    moveLaserDown: function (laser) {
+      laser.style.top = (parseInt(laser.style.top) + LASER_STEP) + 'px';
     }
   };
 })();
