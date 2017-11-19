@@ -3,7 +3,7 @@ import {game} from './game';
 import {playerFireHandler$, invaderFireHandler$} from './fire-handler';
 import {renderer} from './renderer';
 
-let singlePlayerLasers$ = Rx.Observable.gameInterval(100)
+let singlePlayerLasers$ = Rx.Observable.interval(100)
   .map(() => game.state.lasers)
   .flatMap(lasers => Rx.Observable.from(lasers));
 
@@ -21,7 +21,7 @@ singlePlayerLasers$
     game.removeLaser(laser);
   });
 
-let singleInvaderLasers$ = Rx.Observable.gameInterval(100)
+let singleInvaderLasers$ = Rx.Observable.interval(100)
   .map(() => game.state.invaderLasers)
   .flatMap(lasers => Rx.Observable.from(lasers));
 

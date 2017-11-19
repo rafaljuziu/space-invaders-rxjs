@@ -44,7 +44,7 @@ keyUp$.filter(keyRight)
     keysPressed.right = false;
   });
 
-let playerMove = Rx.Observable.gameInterval(50).map(() => keysPressed);
+let playerMove = Rx.Observable.interval(50).map(() => keysPressed);
 
 playerMove.filter(keys => keys.right && !keys.left)
   .subscribe(() => {

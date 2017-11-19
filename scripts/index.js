@@ -1,4 +1,3 @@
-import './game-interval';
 import {game} from './game';
 import './keys';
 import './lasers';
