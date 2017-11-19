@@ -1,6 +1,5 @@
 import * as Rx from 'rxjs-es';
 import {game} from './game';
-import {playerFireHandler$, invaderFireHandler$} from './fire-handler';
 import {renderer} from './renderer';
 
 let singlePlayerLasers$ = Rx.Observable.interval(100)
@@ -10,7 +9,6 @@ let singlePlayerLasers$ = Rx.Observable.interval(100)
 singlePlayerLasers$
   .subscribe(laser => {
     renderer.moveLaserUp(laser);
-    playerFireHandler$.next(laser);
   });
 
 let laserOfTheScreen = laser => parseInt(laser.style.top) < 0 || parseInt(laser.style.top) > window.screen.availHeight;
