@@ -55,11 +55,3 @@ playerMove.filter(keys => !keys.right && keys.left)
   .subscribe(() => {
     game.move(-1);
   });
-
-Rx.Observable.fromEvent(document, 'keydown')
-  .map(keyEvent => keyEvent.code)
-  .filter(keyFire)
-  .throttleTime(1000)
-  .subscribe(() => {
-    game.fire();
-  });
