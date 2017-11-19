@@ -7,7 +7,8 @@ Rx.Observable.gameInterval(1000)
   });
 
 const lowestInvaders$ = game.invaders$
-  .reduce((acc, invader) => replaceInArrayIfIsTheLowest(acc, invader), new Array(TOTAL_COLUMNS));
+  .reduce((acc, invader) => replaceInArrayIfIsTheLowest(acc, invader), new Array(TOTAL_COLUMNS))
+  .map(removeEmptyIndexes);
 
 Rx.Observable.gameInterval(3000)
   .flatMap(() => lowestInvaders$)
@@ -15,6 +16,16 @@ Rx.Observable.gameInterval(3000)
   .subscribe(firingInvader => {
     game.fireFromInvader(firingInvader);
   });
+
+function removeEmptyIndexes(array) {
+  const resultArray = [];
+  for (let el of array) {
+    if (el != null) {
+      resultArray.push(el);
+    }
+  }
+  return resultArray;
+}
 
 function replaceInArrayIfIsTheLowest(acc, invader) {
   for (let lowestInvader of acc) {
@@ -43,21 +54,9 @@ function replaceInArray(acc, invader) {
 }
 
 function getRandomInvader(invaders) {
-  const notEmptyColumnsCount = getNotEmptyColumnsCount(invaders);
-  let randomIndex = parseInt(Math.random() * notEmptyColumnsCount);
-  if (randomIndex === notEmptyColumnsCount) {
+  let randomIndex = parseInt(Math.random() * invaders.length);
+  if (randomIndex === invaders.length) {
     randomIndex--;
   }
-  let invader = invaders[randomIndex];
-  return invader;
-}
-
-function getNotEmptyColumnsCount(invaders) {
-  let count = 0;
-  for (let i = 0; i < invaders.length; i++) {
-    if (invaders[i] != null) {
-      count++;
-    }
-  }
-  return count;
+  return invaders[randomIndex];
 }
