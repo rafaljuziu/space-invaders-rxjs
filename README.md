@@ -2,7 +2,7 @@
 
 This is a popular old-timer implemented in RxJS. The game is for browser.
 
-## Instructions to launch the game: ##
+## Instructions to launch the game locally: ##
 
 1. Clone the Repo to your working directory.
 2. Switch to a branch of your choice (on master the game is fully implemented).
